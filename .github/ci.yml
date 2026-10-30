@@ -10,16 +10,6 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: db_perpustakaan
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping -h localhost" --health-interval=10s --health-timeout=5s --health-retries=5
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -34,13 +24,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Pytest Unit Tests
-        env:
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: db_perpustakaan
-          DB_PORT: 3306
+      - name: Run Pytest
         run: |
-          sleep 10
           pytest
