@@ -34,7 +34,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Wait for MySQL & Run Pytest Unit Tests
+      - name: Run Pytest Unit Tests
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
