@@ -10,7 +10,6 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # Menyalakan layanan database MySQL agar koneksi test_model.py berhasil
     services:
       mysql:
         image: mysql:8.0
@@ -43,5 +42,5 @@ jobs:
           DB_NAME: db_perpustakaan
           DB_PORT: 3306
         run: |
-          sleep 5
+          sleep 10
           pytest
