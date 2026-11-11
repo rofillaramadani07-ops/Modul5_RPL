@@ -87,3 +87,8 @@ class BukuModel:
             return False
         finally:
             cursor.close()
+    def create_buku(self, judul, penulis, tahun):
+        return self.tambah_buku(judul, penulis, tahun)
+
+    def get_all_buku(self):
+        return self.ambil_semua_buku()
