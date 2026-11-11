@@ -1,24 +1,28 @@
 import mysql.connector
 from mysql.connector import Error
 
-class Database:
-  def __init__(self):
-    self.host = "localhost"
-    self.db_name = "perpustakaan"
-    self.username = "root"
-    self.password = ""
-    self.conn = None
+_last_error = None
 
-  def get_connection(self):
+
+def get_connection():
+    global _last_error
     try:
-      self.conn = mysql.connector.connect(
-          host=self.host,
-          database=self.db_name,
-          user=self.username,
-          password=self.password,
-      )
-      if self.conn.is_connected():
-        return self.conn
+        _last_error = None
+        connection = mysql.connector.connect(
+            host='localhost',
+            database='db_perpustakaan',
+            user='root',
+            password=''
+        )
+        if connection.is_connected():
+            return connection
+        _last_error = "Koneksi tidak aktif"
+        return None
     except Error as e:
-      print(f"Koneksi Gagal: {e}")
-      return None
+        _last_error = str(e)
+        print(f"ERROR koneksi database: {e}")
+        return None
+
+
+def get_last_error():
+    return _last_error
