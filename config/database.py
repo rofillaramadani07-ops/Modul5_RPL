@@ -1,3 +1,4 @@
+﻿import os
 import mysql.connector
 from mysql.connector import Error
 
@@ -9,10 +10,11 @@ def get_connection():
     try:
         _last_error = None
         connection = mysql.connector.connect(
-            host='localhost',
-            database='db_perpustakaan',
-            user='root',
-            password=''
+            host=os.getenv("DB_HOST", "localhost"),
+            port=int(os.getenv("DB_PORT", "3306")),
+            database=os.getenv("DB_NAME", "db_perpustakaan"),
+            user=os.getenv("DB_USER", "root"),
+            password=os.getenv("DB_PASSWORD", ""),
         )
         if connection.is_connected():
             return connection
@@ -20,7 +22,6 @@ def get_connection():
         return None
     except Error as e:
         _last_error = str(e)
-        print(f"ERROR koneksi database: {e}")
         return None
 
 

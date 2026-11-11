@@ -1,31 +1,58 @@
-name: CI Pipeline Modul 5 RPL
+﻿name: CI Pipeline Modul 5 RPL
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: db_perpustakaan
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: db_perpustakaan
+
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout kode
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.14"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mysql-connector-python pytest flake8
 
-    - name: Lint dengan flake8
-      run: flake8 models/ controllers/ --count --select=E9,F63,F7,F82 --show-source --statistics
-    - name: Run Pytest Unit Tests
-      run: |
-        python -m pytest -v
+      - name: Buat tabel database
+        continue-on-error: true
+        run: |
+          python buat_tabel.py
+          python buat_tabel_anggota.py
+
+      - name: Lint dengan flake8
+        run: flake8 models/ controllers/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Jalankan pytest
+        run: pytest
